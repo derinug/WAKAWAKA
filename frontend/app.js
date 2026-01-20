@@ -105,6 +105,7 @@ function showConfigurationWarning() {
 }
 
 // Tab management
+// Tab management
 function showTab(tabName) {
     const tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => tab.classList.add('hidden'));
@@ -113,7 +114,13 @@ function showTab(tabName) {
     
     const tabButtons = document.querySelectorAll('.tab');
     tabButtons.forEach(btn => btn.classList.remove('tab-active'));
-    event.target.classList.add('tab-active');
+    
+    // Find and activate the correct tab button
+    tabButtons.forEach(btn => {
+        if (btn.getAttribute('onclick')?.includes(tabName)) {
+            btn.classList.add('tab-active');
+        }
+    });
     
     // Load data when switching to specific tabs
     if (tabName === 'orders') {
