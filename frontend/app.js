@@ -37,7 +37,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     loadDashboard();
     loadCustomers();
     loadProducts();
+    
+    // Setup tab click handlers
+    setupTabHandlers();
 });
+
+
+// Setup tab click event listeners
+function setupTabHandlers() {
+    const tabs = document.querySelectorAll('[data-tab]');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tabName = this.getAttribute('data-tab');
+            showTab(tabName);
+        });
+    });
+}
 
 // Load configuration from storage
 async function loadConfiguration() {
@@ -106,18 +122,25 @@ function showConfigurationWarning() {
 
 // Tab management
 // Tab management
+// Tab management
 function showTab(tabName) {
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.classList.add('hidden'));
+    console.log('Switching to tab:', tabName);
     
-    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tab => tab.classList.add('hidden'));
     
-    const tabButtons = document.querySelectorAll('.tab');
-    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+    // Show selected tab content
+    const selectedTab = document.getElementById(`${tabName}-tab`);
+    if (selectedTab) {
+        selectedTab.classList.remove('hidden');
+    }
     
-    // Find and activate the correct tab button
+    // Update active tab button
+    const tabButtons = document.querySelectorAll('[data-tab]');
     tabButtons.forEach(btn => {
-        if (btn.getAttribute('onclick')?.includes(tabName)) {
+        btn.classList.remove('tab-active');
+        if (btn.getAttribute('data-tab') === tabName) {
             btn.classList.add('tab-active');
         }
     });
@@ -128,6 +151,9 @@ function showTab(tabName) {
     } else if (tabName === 'dashboard') {
         loadDashboard();
     }
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
 }
 
 // API Helper
@@ -581,6 +607,9 @@ function refreshData() {
     showToast('Refreshing data...', 'info');
     loadDashboard();
     loadOrders();
+    
+    // Switch back to dashboard tab
+    showTab('dashboard');
 }
 
 // Settings Management
@@ -799,3 +828,20 @@ async function clearAllSettings() {
         showToast('Failed to clear settings: ' + error.message, 'error');
     }
 }
+
+// Pastikan showTab tersedia di global scope
+window.showTab = showTab;
+window.refreshData = refreshData;
+window.showSettings = showSettings;
+window.closeSettings = closeSettings;
+window.saveSettings = saveSettings;
+window.testApiConnection = testApiConnection;
+window.clearAllSettings = clearAllSettings;
+window.toggleApiKeyVisibility = toggleApiKeyVisibility;
+window.viewOrder = viewOrder;
+window.updateOrderStatus = updateOrderStatus;
+window.deleteOrder = deleteOrder;
+window.changePage = changePage;
+window.addOrderItem = addOrderItem;
+window.createOrder = createOrder;
+window.generateReport = generateReport;

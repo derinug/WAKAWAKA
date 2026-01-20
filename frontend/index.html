@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +12,13 @@
         .stats-card {
             transition: transform 0.2s;
         }
+
         .stats-card:hover {
             transform: translateY(-5px);
         }
     </style>
 </head>
+
 <body class="bg-base-200">
     <!-- Navbar -->
     <div class="navbar bg-base-100 shadow-lg">
@@ -30,7 +33,8 @@
                 <label tabindex="0" class="btn btn-ghost btn-circle">
                     <i class="fas fa-cog"></i>
                 </label>
-                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a onclick="showSettings()"><i class="fas fa-sliders-h mr-2"></i>Settings</a></li>
                     <li><a onclick="refreshData()"><i class="fas fa-sync mr-2"></i>Refresh</a></li>
                 </ul>
@@ -41,20 +45,20 @@
     <!-- Main Container -->
     <div class="container mx-auto p-4">
         <!-- Tabs -->
-        <div class="tabs tabs-boxed mb-4">
-            <a class="tab tab-active" onclick="showTab('dashboard')">
+        <div class="tabs tabs-boxed mb-4" id="main-tabs">
+            <a class="tab tab-active" data-tab="dashboard">
                 <i class="fas fa-chart-line mr-2"></i>Dashboard
             </a>
-            <a class="tab" onclick="showTab('orders')">
+            <a class="tab" data-tab="orders">
                 <i class="fas fa-shopping-cart mr-2"></i>Orders
             </a>
-            <a class="tab" onclick="showTab('create')">
+            <a class="tab" data-tab="create">
                 <i class="fas fa-plus-circle mr-2"></i>Create Order
             </a>
-            <a class="tab" onclick="showTab('reports')">
+            <a class="tab" data-tab="reports">
                 <i class="fas fa-file-alt mr-2"></i>Reports
             </a>
-            <a class="tab" onclick="showTab('monitor')">
+            <a class="tab" data-tab="monitor">
                 <i class="fas fa-desktop mr-2"></i>Monitor
             </a>
         </div>
@@ -62,7 +66,7 @@
         <!-- Dashboard Tab -->
         <div id="dashboard-tab" class="tab-content">
             <h2 class="text-2xl font-bold mb-4">Dashboard Overview</h2>
-            
+
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div class="card bg-base-100 shadow-xl stats-card">
@@ -175,7 +179,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="flex justify-center mt-4">
                         <div class="join" id="pagination">
@@ -191,7 +195,7 @@
         <!-- Create Order Tab -->
         <div id="create-tab" class="tab-content hidden">
             <h2 class="text-2xl font-bold mb-4">Create New Order</h2>
-            
+
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
                     <form id="create-order-form" onsubmit="createOrder(event)">
@@ -220,7 +224,8 @@
                                     <label class="label">
                                         <span class="label-text">Quantity</span>
                                     </label>
-                                    <input type="number" class="input input-bordered quantity-input" min="1" value="1" required>
+                                    <input type="number" class="input input-bordered quantity-input" min="1" value="1"
+                                        required>
                                 </div>
                                 <div class="form-control">
                                     <label class="label">
@@ -257,7 +262,7 @@
         <!-- Reports Tab -->
         <div id="reports-tab" class="tab-content hidden">
             <h2 class="text-2xl font-bold mb-4">Reports</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
@@ -311,7 +316,7 @@
         <!-- Monitor Tab -->
         <div id="monitor-tab" class="tab-content hidden">
             <h2 class="text-2xl font-bold mb-4">System Monitoring</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
@@ -364,7 +369,7 @@
                                     <i class="fas fa-circle text-xs"></i>
                                 </div>
                                 <div class="timeline-end timeline-box">System started</div>
-                                <hr/>
+                                <hr />
                             </li>
                         </ul>
                     </div>
@@ -397,11 +402,12 @@
             <h3 class="font-bold text-lg mb-4">
                 <i class="fas fa-cog mr-2"></i>API Settings
             </h3>
-            
+
             <div class="alert alert-info mb-4">
                 <i class="fas fa-info-circle"></i>
                 <div>
-                    <p class="text-sm">Configure your AWS API Gateway endpoint and API key to connect to your serverless backend.</p>
+                    <p class="text-sm">Configure your AWS API Gateway endpoint and API key to connect to your serverless
+                        backend.</p>
                     <p class="text-xs mt-1">Status: <span id="config-status" class="font-bold">Not Configured</span></p>
                 </div>
             </div>
@@ -414,15 +420,13 @@
                             <i class="fas fa-link mr-2"></i>API Endpoint URL
                         </span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="settings-api-endpoint" 
+                    <input type="text" id="settings-api-endpoint"
                         placeholder="https://your-api-id.execute-api.region.amazonaws.com/prod"
-                        class="input input-bordered w-full"
-                    />
+                        class="input input-bordered w-full" />
                     <label class="label">
                         <span class="label-text-alt text-error" id="api-endpoint-error"></span>
-                        <span class="label-text-alt">Example: https://abc123.execute-api.us-east-1.amazonaws.com/prod</span>
+                        <span class="label-text-alt">Example:
+                            https://abc123.execute-api.us-east-1.amazonaws.com/prod</span>
                     </label>
                 </div>
 
@@ -434,18 +438,10 @@
                         </span>
                     </label>
                     <div class="join w-full">
-                        <input 
-                            type="password" 
-                            id="settings-api-key" 
-                            placeholder="Enter your API key"
-                            class="input input-bordered join-item w-full"
-                        />
-                        <button 
-                            type="button" 
-                            class="btn join-item" 
-                            id="toggle-api-key-btn"
-                            onclick="toggleApiKeyVisibility()"
-                        >
+                        <input type="password" id="settings-api-key" placeholder="Enter your API key"
+                            class="input input-bordered join-item w-full" />
+                        <button type="button" class="btn join-item" id="toggle-api-key-btn"
+                            onclick="toggleApiKeyVisibility()">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -489,13 +485,9 @@
 
                 <!-- Test Connection -->
                 <div class="divider">Connection Test</div>
-                
-                <button 
-                    type="button" 
-                    class="btn btn-outline btn-info w-full"
-                    id="test-connection-btn"
-                    onclick="testApiConnection()"
-                >
+
+                <button type="button" class="btn btn-outline btn-info w-full" id="test-connection-btn"
+                    onclick="testApiConnection()">
                     <i class="fas fa-plug mr-2"></i>Test API Connection
                 </button>
 
@@ -519,4 +511,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
