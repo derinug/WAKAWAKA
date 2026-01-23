@@ -12,7 +12,7 @@ frontend:
         - echo "Frontend uses persistent storage for configuration"
         - echo "Build completed successfully"
   artifacts:
-    baseDirectory: /
+    baseDirectory: frontend
     files:
       - '**/*'
   cache:
