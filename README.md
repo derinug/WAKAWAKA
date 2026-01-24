@@ -53,14 +53,13 @@ https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
 
 ---
 
-### 1. Create Order
 
+### 1. Create Order
 **POST** `/orders`
 
-Creates a new order, stores it in the database and S3, and starts a Step Functions workflow.
+Creates a new order, saves to database and S3, and starts a Step Functions workflow.
 
-#### Request
-
+**Request:**
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
@@ -68,12 +67,12 @@ curl -X POST \
   -d '{
     "customer_id": "CUST001",
     "items": [
-      { "product_id": "PROD001", "quantity": 2 },
-      { "product_id": "PROD002", "quantity": 1 }
+      {"product_id": "PROD001", "quantity": 2},
+      {"product_id": "PROD002", "quantity": 1}
     ]
   }' \
   https://your-api-id.execute-api.region.amazonaws.com/stage/orders
-```
+  ```
 
 #### Response – 201 Created
 
@@ -149,11 +148,125 @@ curl -X GET \
 
 ---
 
+#### Response – 200 OK
+
+```json
+{
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",
+  "customer_id": "CUST001",
+  "total_amount": 150.75,
+  "status": "pending",
+  "created_at": "2024-01-24T10:30:00",
+  "items": [
+    {
+      "product_id": "PROD001",
+      "quantity": 2,
+      "price": 50.25
+    },
+    {
+      "product_id": "PROD002",
+      "quantity": 1,
+      "price": 50.25
+    }
+  ]
+}
+```
+
+### 4. Update Order Details
+
+**PUT** `/orders/{order_id}`
+
+Updates the status of an existing order.
+
+#### Request
+
+```bash
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{"status": "processing"}' \
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/youruniqid"
+```
+#### Response – 200 OK
+
+```json
+{
+  "message": "Order updated successfully",
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "processing"
+}
+```
+
+### 5. Delete Order Details
+
+**DELETE** `/orders/{order_id}`
+
+Deletes an order and its associated items from the database.
+
+#### Request
+
+```bash
+curl -X DELETE \
+  -H "x-api-key: YOUR_API_KEY" \
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/youruniqid"
+```
+#### Response – 200 OK
+
+```json
+{
+  "message": "Order deleted successfully",
+  "order_id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+### 5. Get Workflow Status
+
+**GET ** `/status/{order_id}`
+
+Checks the status of a Step Functions workflow execution. Accepts either execution ARN or order ID.
+
+#### Request
+
+```bash
+curl -X GET \
+  -H "x-api-key: YOUR_API_KEY" \
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/status/youruniqid"
+```
+#### Request with Execution ARN:
+
+```bash
+curl -X GET \
+  -H "x-api-key: YOUR_API_KEY" \
+  "curl -X GET \
+  -H "x-api-key: YOUR_API_KEY" \
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/status/arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:yourarnstepfunction""
+```
+
+#### Response – 200 OK
+
+```json
+{
+  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000",
+  "status": "RUNNING",
+  "start_date": "2024-01-24T10:30:00",
+  "input_identifier": "550e8400-e29b-41d4-a716-446655440000",
+  "identifier_type": "order_id",
+  "recent_events": [
+    {
+      "type": "ExecutionStarted",
+      "timestamp": "2024-01-24T10:30:00",
+      "state": null
+    }
+  ]
+}
+```
+
+
 ## Authentication
 
-All endpoints require API Key authentication.
+All endpoints require API Key authentication. Include the API Key in the request header:
 
-```
+```bash
 x-api-key: YOUR_API_KEY
 ```
 
