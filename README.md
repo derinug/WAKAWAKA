@@ -113,7 +113,7 @@ curl -X GET \
 \
 
 **Response (200 OK):**
-\
+\```json
 {\
   "order_id": "550e8400-e29b-41d4-a716-446655440000",\
   "customer_id": "CUST001",\
