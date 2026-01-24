@@ -7,20 +7,30 @@ def lambda_handler(event, context):
     Simulate payment processing
     """
     try:
-        print(f"Received event: {json.dumps(event)}")
+        print(f"=== PAYMENT PROCESSING START ===")
+        print(f"Event received: {json.dumps(event, indent=2)}")
         
+        # Extract data
         order_id = event.get('order_id')
         total_amount = event.get('total_amount', 0)
-        current_time = int(time.time())
         
-        # Convert order_id to string for slicing
-        order_id_str = str(order_id)
+        print(f"Processing payment - Order ID: {order_id}, Amount: {total_amount}")
+        
+        if not order_id:
+            return {
+                'paymentStatus': 'error',
+                'message': 'Order ID is required',
+                'timestamp': int(time.time())
+            }
         
         # Simulate payment processing delay
-        time.sleep(2)
+        time.sleep(1)
         
-        # Simulate payment success/failure (90% success rate)
+        # Simulate payment success/failure
         payment_success = random.random() < 0.9
+        
+        current_time = int(time.time())
+        order_id_str = str(order_id)
         
         if payment_success:
             payment_status = 'success'
@@ -32,28 +42,25 @@ def lambda_handler(event, context):
             message = 'Payment processing failed'
         
         response = {
-            'order_id': order_id,
-            'paymentStatus': payment_status,
-            'transaction_id': transaction_id,
-            'amount': total_amount,
+            'paymentStatus': payment_status,  # PERHATIKAN: camelCase
+            'transaction_id': transaction_id, # snake_case
             'message': message,
-            'timestamp': current_time,
-            'processed_at': current_time  # Tambahkan field ini
+            'timestamp': current_time
         }
         
-        print(f"Returning response: {json.dumps(response)}")
+        print(f"=== PAYMENT PROCESSING END ===")
+        print(f"Returning response: {json.dumps(response, indent=2)}")
         return response
         
     except Exception as e:
         print(f"Error processing payment: {str(e)}")
-        current_time = int(time.time())
+        import traceback
+        traceback.print_exc()
+        
         error_response = {
-            'order_id': event.get('order_id'),
-            'paymentStatus': 'error',
-            'transaction_id': None,
+            'paymentStatus': 'error',  # PERHATIKAN: camelCase
             'message': f'Payment error: {str(e)}',
-            'timestamp': current_time,
-            'processed_at': current_time  # Tambahkan field ini
+            'timestamp': int(time.time())
         }
-        print(f"Returning error response: {json.dumps(error_response)}")
+        print(f"Returning error response: {json.dumps(error_response, indent=2)}")
         return error_response

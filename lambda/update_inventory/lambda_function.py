@@ -21,59 +21,72 @@ def get_db_connection():
     )
 
 def lambda_handler(event, context):
-    print(f"Updating inventory for event: {json.dumps(event)}")
+    print(f"=== INVENTORY UPDATE START ===")
+    print(f"Event received: {json.dumps(event, indent=2)}")
     
-    # Convert order_id to string if it's integer
-    order_id = str(event.get('order_id')) if event.get('order_id') else None
-    items = event.get('items', [])
+    # Extract data - handle nested structure
+    order_id = event.get('order_id')
+    transaction_id = None
+    items = []
+    
+    # Try to get from event directly
+    if 'orderId' in event:
+        order_id = event['orderId']
+        transaction_id = event.get('transaction_id')
+        items = event.get('items', [])
+    elif 'order_id' in event:
+        order_id = event['order_id']
+        transaction_id = event.get('transaction_id')
+        items = event.get('items', [])
+    
+    print(f"Extracted - order_id: {order_id}, transaction_id: {transaction_id}, items count: {len(items)}")
     
     if not order_id:
         return {
-            'order_id': order_id,
             'inventoryStatus': 'failed',
-            'message': 'Order ID is required',
-            'updated_products': [],
-            'low_stock_alerts': []
+            'message': 'Order ID is required'
         }
+
+    order_id = str(order_id)
     
+    # If items are empty, fetch from database
     if not items:
-        # If items not in event, get from database
         try:
+            print(f"Fetching items from database for order_id: {order_id}")
             conn = get_db_connection()
             cur = conn.cursor()
             
             cur.execute("""
-                SELECT product_id, quantity
-                FROM order_items
-                WHERE order_id = %s
+                SELECT oi.product_id, oi.quantity, i.product_name, i.price
+                FROM order_items oi
+                JOIN inventory i ON oi.product_id = i.product_id
+                WHERE oi.order_id = %s
             """, (order_id,))
             
             items = []
             for row in cur.fetchall():
                 items.append({
                     'productId': row[0],
-                    'quantity': row[1]
+                    'productName': row[2],
+                    'quantity': row[1],
+                    'price': float(row[3])
                 })
             
             cur.close()
             conn.close()
             
+            print(f"Fetched {len(items)} items from database")
+            
             if not items:
                 return {
-                    'order_id': order_id,
                     'inventoryStatus': 'failed',
-                    'message': 'No items found for this order',
-                    'updated_products': [],
-                    'low_stock_alerts': []
+                    'message': 'No items found for this order'
                 }
         except Exception as e:
             print(f"Error fetching order items: {str(e)}")
             return {
-                'order_id': order_id,
                 'inventoryStatus': 'failed',
-                'message': f'Error fetching items: {str(e)}',
-                'updated_products': [],
-                'low_stock_alerts': []
+                'message': f'Error fetching items: {str(e)}'
             }
     
     conn = get_db_connection()
@@ -84,24 +97,11 @@ def lambda_handler(event, context):
         low_stock_alerts = []
         
         for item in items:
-            # Handle both productId and productName
-            product_id = item.get('productId') or item.get('product_id')
-            product_name = item.get('productName') or item.get('product_name')
+            product_id = item.get('productId')
             quantity = item.get('quantity', 0)
             
-            # If only productName is provided, find product_id
-            if not product_id and product_name:
-                cur.execute("""
-                    SELECT product_id FROM inventory 
-                    WHERE product_name = %s
-                """, (product_name,))
-                
-                row = cur.fetchone()
-                if row:
-                    product_id = row[0]
-            
             if not product_id:
-                print(f"Product not found: {product_name or 'unknown'}")
+                print(f"Product ID not found for item: {item}")
                 continue
             
             # Check current stock
@@ -117,20 +117,16 @@ def lambda_handler(event, context):
                 print(f"Product {product_id} not found in inventory")
                 continue
             
-            current_stock, db_product_name = result
+            current_stock, product_name = result
             
             # Check if sufficient stock
             if current_stock < quantity:
                 conn.rollback()
+                error_msg = f'Insufficient stock for product {product_name}. Available: {current_stock}, Requested: {quantity}'
+                print(error_msg)
                 return {
-                    'order_id': order_id,
                     'inventoryStatus': 'failed',
-                    'message': f'Insufficient stock for product {db_product_name}',
-                    'product_id': product_id,
-                    'available': current_stock,
-                    'requested': quantity,
-                    'updated_products': [],
-                    'low_stock_alerts': []
+                    'message': error_msg
                 }
             
             # Update inventory
@@ -144,30 +140,30 @@ def lambda_handler(event, context):
             
             updated_products.append({
                 'product_id': product_id,
-                'product_name': db_product_name,
+                'product_name': product_name,
                 'previous_stock': current_stock,
                 'new_stock': new_stock,
                 'quantity_sold': quantity
             })
             
-            # Check for low stock (threshold: 10 units)
+            # Check for low stock
             if new_stock <= 10:
                 low_stock_alerts.append({
                     'product_id': product_id,
-                    'product_name': db_product_name,
+                    'product_name': product_name,
                     'current_stock': new_stock
                 })
         
         # Update order status
         cur.execute("""
             UPDATE orders
-            SET status = %s, updated_at = %s
+            SET status = 'processing', updated_at = %s
             WHERE order_id = %s
-        """, ('inventory_updated', datetime.now(), order_id))
+        """, (datetime.now(), str(order_id)))
         
         conn.commit()
         
-        # Send low stock events to EventBridge
+        # Send low stock events
         if low_stock_alerts:
             for alert in low_stock_alerts:
                 try:
@@ -189,23 +185,20 @@ def lambda_handler(event, context):
         print(f"Inventory updated successfully for order {order_id}")
         
         return {
-            'order_id': order_id,
             'inventoryStatus': 'success',
             'message': 'Inventory updated successfully',
             'updated_products': updated_products,
-            'low_stock_alerts': low_stock_alerts,
-            'updated_at': datetime.now().isoformat()
+            'low_stock_alerts': low_stock_alerts
         }
         
     except Exception as e:
         conn.rollback()
         print(f"Error updating inventory: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
-            'order_id': order_id,
             'inventoryStatus': 'failed',
-            'message': f'Inventory update error: {str(e)}',
-            'updated_products': [],
-            'low_stock_alerts': []
+            'message': f'Inventory update error: {str(e)}'
         }
     finally:
         cur.close()
