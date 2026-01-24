@@ -112,26 +112,26 @@ curl -X GET \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/{id}"
 \
 
-**Response (200 OK):**
-\```json
-{\
-  "order_id": "550e8400-e29b-41d4-a716-446655440000",\
-  "customer_id": "CUST001",\
-  "total_amount": 150.75,\
-  "status": "pending",\
-  "created_at": "2024-01-24T10:30:00",\
-  "items": [\
-    {\
-      "product_id": "PROD001",\
-      "quantity": 2,\
-      "price": 50.25\
-    },\
-    {\
-      "product_id": "PROD002",\
-      "quantity": 1,\
-      "price": 50.25\
-    }\
-  ]\
+**Response (200 OK):**<br/>
+```json
+{
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",
+  "customer_id": "CUST001",
+  "total_amount": 150.75,
+  "status": "pending",
+  "created_at": "2024-01-24T10:30:00",
+  "items": [
+    {
+      "product_id": "PROD001",
+      "quantity": 2,
+      "price": 50.25
+    },
+    {
+      "product_id": "PROD002",
+      "quantity": 1,
+      "price": 50.25
+    }
+  ]
 }
 
 ### 4. Update Order Status
