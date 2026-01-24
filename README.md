@@ -24,28 +24,12 @@ This API provides a complete order management system with the following features
 -  Automatic S3 backup of orders
 -  Step Functions workflow triggering
 
-## Architecture
-
-\\\mermaid
-graph LR
-    A[Client] --> B[API Gateway]
-    B --> C[Lambda Function]
-    C --> D[RDS PostgreSQL]
-    C --> E[S3 Bucket]
-    C --> F[Step Functions]
-    F --> G[Workflow States]
-    
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style C fill:#9cf,stroke:#333,stroke-width:2px
-\\\
-
 ## API Endpoints
 
 ### Base URL
-\\\
+\\
 https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
-\\\
+\\
 
 ### 1. Create Order
 **POST** \/orders\
