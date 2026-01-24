@@ -29,7 +29,7 @@ This API provides a complete order management system with the following features
 ### Base URL
 \
 https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
-\
+
 
 ### 1. Create Order
 **POST** \/orders
@@ -37,29 +37,29 @@ https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
 Creates a new order, saves to database and S3, and starts a Step Functions workflow.
 
 **Request:**<br/>
-\
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
+```json
+curl -X POST 
+  -H "Content-Type: application/json" 
+  -H "x-api-key: YOUR_API_KEY" 
   -d '{
     "customer_id": "CUST001",
     "items": [
       {"product_id": "PROD001", "quantity": 2},
       {"product_id": "PROD002", "quantity": 1}
     ]
-  }' \
+  }' 
   https://your-api-id.execute-api.region.amazonaws.com/stage/orders
-\
+<br/>
 
-**Response (201 Created):**\
-\
+**Response (201 Created):**<br/>
+```json
 {
-  "message": "Order created successfully",\
-  "order_id": "550e8400-e29b-41d4-a716-446655440000",\
-  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:arnstepfunction",\
-  "note": "Save this execution_arn to check workflow status later"\
-}\
-\
+  "message": "Order created successfully",
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",
+  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:arnstepfunction",
+  "note": "Save this execution_arn to check workflow status later"
+}
+<br/>
 
 ### 2. List Orders
 **GET** \/orders
@@ -79,26 +79,26 @@ curl -X GET \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders?page=1&limit=10"
 \
 
-**Response (200 OK):**
-\
-{\
-  "orders": [\
-    {\
-      "order_id": "550e8400-e29b-41d4-a716-446655440000",\
-      "customer_id": "CUST001",\
-      "total_amount": 150.75,\
-      "status": "pending",\
-      "created_at": "2024-01-24T10:30:00"\
-    }\
-  ],\
-  "pagination": {\
-    "page": 1,\
-    "limit": 10,\
-    "total": 25,\
-    "pages": 3\
-  }\
-}\
-\
+**Response (200 OK):**<br/>
+```json
+{
+  "orders": [
+    {
+      "order_id": "550e8400-e29b-41d4-a716-446655440000",
+      "customer_id": "CUST001",
+      "total_amount": 150.75,
+      "status": "pending",
+      "created_at": "2024-01-24T10:30:00"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "pages": 3
+  }
+}
+<br/>
 
 ### 3. Get Order Details
 **GET** \/orders/{order_id}
@@ -110,7 +110,7 @@ Retrieves detailed information about a specific order including order items.\
 curl -X GET \
   -H "x-api-key: YOUR_API_KEY" \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/{id}"
-\
+
 
 **Response (200 OK):**<br/>
 ```json
@@ -132,7 +132,7 @@ curl -X GET \
       "price": 50.25
     }
   ]
-}
+}<br/>
 
 ### 4. Update Order Status
 **PUT** \/orders/{order_id}
@@ -147,13 +147,13 @@ curl -X PUT \
   -d '{"status": "processing"}' \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/550e8400-e29b-41d4-a716-446655440000"
 
-**Response (200 OK):**
-\
+**Response (200 OK):**<br/>
+```json
 {
-  "message": "Order updated successfully",\
-  "order_id": "550e8400-e29b-41d4-a716-446655440000",\
-  "status": "processing"\
-}
+  "message": "Order updated successfully",
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "processing"
+}<br/>
 
 ### 5. Delete Order
 **DELETE** \/orders/{order_id}
@@ -166,12 +166,12 @@ curl -X DELETE \
   -H "x-api-key: YOUR_API_KEY" \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/550e8400-e29b-41d4-a716-446655440000"
 
-**Response (200 OK):**
-\
-{\
-  "message": "Order deleted successfully",\
-  "order_id": "550e8400-e29b-41d4-a716-446655440000"\
-}
+**Response (200 OK):**<br/>
+```json
+{
+  "message": "Order deleted successfully",
+  "order_id": "550e8400-e29b-41d4-a716-446655440000"
+}<br/>
 
 ### 6. Get Workflow Status
 **GET** \/status/{identifier}
@@ -184,28 +184,28 @@ curl -X GET \
   -H "x-api-key: YOUR_API_KEY" \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/status/550e8400-e29b-41d4-a716-446655440000"
 
-**Request with Execution ARN:**
-\
-curl -X GET \
-  -H "x-api-key: YOUR_API_KEY" \
-  "https://your-api-id.execute-api.region.amazonaws.com/stage/status/arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000"
+**Request with Execution ARN:**<br/>
+```json
+curl -X GET 
+  -H "x-api-key: YOUR_API_KEY" 
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/status/arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000"<br/>
 
-**Response (200 OK):**
-\
-{\
-  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000",\
-  "status": "RUNNING",\
-  "start_date": "2024-01-24T10:30:00",\
-  "input_identifier": "550e8400-e29b-41d4-a716-446655440000",\
-  "identifier_type": "order_id",\
-  "recent_events": [\
-    {\
-      "type": "ExecutionStarted",\
-      "timestamp": "2024-01-24T10:30:00",\
-      "state": null\
-    }\
-  ]\
-}
+**Response (200 OK):**<br/>
+```json
+{
+  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000",
+  "status": "RUNNING",
+  "start_date": "2024-01-24T10:30:00",
+  "input_identifier": "550e8400-e29b-41d4-a716-446655440000",
+  "identifier_type": "order_id",
+  "recent_events": [
+    {
+      "type": "ExecutionStarted",
+      "timestamp": "2024-01-24T10:30:00",
+      "state": null
+    }
+  ]
+}<br/>
 
 
 ## Authentication
@@ -229,32 +229,32 @@ x-api-key: your-api-key-here
 
 ## Error Handling
 
-### 400 Bad Request
-\
-{\
-  "message": "Missing required field: customer_id"\
+### 400 Bad Request<br/>
+```json
+{
+  "message": "Missing required field: customer_id"
 }
 
 ### 403 Forbidden
-\
-{\
-  "message": "Forbidden"\
-}
+```json
+{
+  "message": "Forbidden"
+}<br/>
 
 
 ### 404 Not Found
-\
-{\
-  "message": "Order not found"\
-}
+```json
+{
+  "message": "Order not found"
+}<br/>
 
 
 ### 500 Internal Server Error
-\
-{\
-  "message": "Internal server error",\
-  "error": "Detailed error message"\
-}
+```json
+{
+  "message": "Internal server error",
+  "error": "Detailed error message"
+}<br/>
 
 
 ## Support
