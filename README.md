@@ -52,17 +52,17 @@ curl -X POST \
 \
 
 **Response (201 Created):**\
-\\json
+\
 {
   "message": "Order created successfully",\
   "order_id": "550e8400-e29b-41d4-a716-446655440000",\
-  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:OrderProcessingStateMachine:550e8400-e29b-41d4-a716-446655440000",\
+  "execution_arn": "arn:aws:states:us-east-1:123456789012:execution:arnstepfunction",\
   "note": "Save this execution_arn to check workflow status later"\
 }\
-\\\
+\
 
 ### 2. List Orders
-**GET** \/orders\
+**GET** \/orders
 
 Retrieves a paginated list of orders.
 
@@ -72,68 +72,68 @@ Retrieves a paginated list of orders.
 | \page\ | integer | 1 | Page number |
 | \limit\ | integer | 10 | Items per page |
 
-**Request:**
-\\\ash
+**Request:**<br/>
+\
 curl -X GET \
   -H "x-api-key: YOUR_API_KEY" \
   "https://your-api-id.execute-api.region.amazonaws.com/stage/orders?page=1&limit=10"
-\\\
+\
 
 **Response (200 OK):**
-\\\json
-{
-  "orders": [
-    {
-      "order_id": "550e8400-e29b-41d4-a716-446655440000",
-      "customer_id": "CUST001",
-      "total_amount": 150.75,
-      "status": "pending",
-      "created_at": "2024-01-24T10:30:00"
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 25,
-    "pages": 3
-  }
-}
-\\\
+\
+{\
+  "orders": [\
+    {\
+      "order_id": "550e8400-e29b-41d4-a716-446655440000",\
+      "customer_id": "CUST001",\
+      "total_amount": 150.75,\
+      "status": "pending",\
+      "created_at": "2024-01-24T10:30:00"\
+    }\
+  ],\
+  "pagination": {\
+    "page": 1,\
+    "limit": 10,\
+    "total": 25,\
+    "pages": 3\
+  }\
+}\
+\
 
 ### 3. Get Order Details
-**GET** \/orders/{order_id}\
+**GET** \/orders/{order_id}
 
-Retrieves detailed information about a specific order including order items.
+Retrieves detailed information about a specific order including order items.\
 
 **Request:**
-\\\ash
+\
 curl -X GET \
   -H "x-api-key: YOUR_API_KEY" \
-  "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/550e8400-e29b-41d4-a716-446655440000"
-\\\
+  "https://your-api-id.execute-api.region.amazonaws.com/stage/orders/{id}"
+\
 
 **Response (200 OK):**
-\\\json
-{
-  "order_id": "550e8400-e29b-41d4-a716-446655440000",
-  "customer_id": "CUST001",
-  "total_amount": 150.75,
-  "status": "pending",
-  "created_at": "2024-01-24T10:30:00",
-  "items": [
-    {
-      "product_id": "PROD001",
-      "quantity": 2,
-      "price": 50.25
-    },
-    {
-      "product_id": "PROD002",
-      "quantity": 1,
-      "price": 50.25
-    }
-  ]
-}
-\\\
+\
+{\
+  "order_id": "550e8400-e29b-41d4-a716-446655440000",\
+  "customer_id": "CUST001",\
+  "total_amount": 150.75,\
+  "status": "pending",\
+  "created_at": "2024-01-24T10:30:00",\
+  "items": [\
+    {\
+      "product_id": "PROD001",\
+      "quantity": 2,\
+      "price": 50.25\
+    },\
+    {\
+      "product_id": "PROD002",\
+      "quantity": 1,\
+      "price": 50.25\
+    }\
+  ]\
+}\
+
 
 ### 4. Update Order Status
 **PUT** \/orders/{order_id}\
