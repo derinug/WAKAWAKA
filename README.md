@@ -31,19 +31,6 @@ This API provides a complete order management system with the following features
 
 ---
 
-## Architecture
-
-The system consists of:
-
-- **API Gateway** – REST API entry point  
-- **AWS Lambda** – Business logic  
-- **Relational Database** – Order persistence  
-- **Amazon S3** – Order backup storage  
-- **AWS Step Functions** – Order processing workflow  
-- **Amplify** - Deploy Frontend Application
-
----
-
 
 ## API Endpoints
 
