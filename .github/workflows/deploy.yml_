@@ -19,7 +19,7 @@ on:
         description: '📧 Email Anda (required untuk tracking)'
         required: true
         type: string
-        default: ''
+        default: 'derinug26@gmail.com'
         validation: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
         help: 'Email akan digunakan untuk notifikasi dan tracking deployment'
       
