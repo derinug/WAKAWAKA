@@ -1,6 +1,6 @@
 # 4. S3 Gateway Endpoint
 resource "aws_vpc_endpoint" "lks_s3_endpoint" {
-  vpc_id            = aws_vpc.hybrid_vpc.id
+  vpc_id            = aws_vpc.lks_vpc.id
   service_name      = "com.amazonaws.us-east-1.s3"
   vpc_endpoint_type = "Gateway"
 
@@ -15,7 +15,7 @@ resource "aws_vpc_endpoint" "lks_s3_endpoint" {
 
 # 5. EventBridge Interface Endpoint
 resource "aws_vpc_endpoint" "lks_eventbridge_endpoint" {
-  vpc_id            = aws_vpc.hybrid_vpc.id
+  vpc_id            = aws_vpc.lks_vpc.id
   service_name      = "com.amazonaws.us-east-1.events"
   vpc_endpoint_type = "Interface"
   subnet_ids = [
@@ -32,7 +32,7 @@ resource "aws_vpc_endpoint" "lks_eventbridge_endpoint" {
 
 # 6. Step Functions Interface Endpoint
 resource "aws_vpc_endpoint" "lks_steps_endpoint" {
-  vpc_id            = aws_vpc.hybrid_vpc.id
+  vpc_id            = aws_vpc.lks_vpc.id
   service_name      = "com.amazonaws.us-east-1.states"
   vpc_endpoint_type = "Interface"
   subnet_ids = [
@@ -49,7 +49,7 @@ resource "aws_vpc_endpoint" "lks_steps_endpoint" {
 
 # 7. SNS Interface Endpoint
 resource "aws_vpc_endpoint" "lks_sns_endpoint" {
-  vpc_id            = aws_vpc.hybrid_vpc.id
+  vpc_id            = aws_vpc.lks_vpc.id
   service_name      = "com.amazonaws.us-east-1.sns"
   vpc_endpoint_type = "Interface"
   subnet_ids = [
